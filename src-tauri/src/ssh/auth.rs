@@ -1,6 +1,8 @@
 use anyhow::{bail, Context, Result};
 use russh::client::{self, KeyboardInteractiveAuthResponse, Prompt};
-use russh::keys::agent::{client::AgentClient, AgentIdentity};
+#[cfg(unix)]
+use russh::keys::agent::client::AgentClient;
+use russh::keys::agent::AgentIdentity;
 use russh::keys::ssh_key::PublicKey;
 use russh::keys::{key::PrivateKeyWithHashAlg, load_secret_key};
 use std::env;
@@ -61,6 +63,7 @@ where
     bail!("{}", req.rejected_message)
 }
 
+#[cfg(unix)]
 async fn authenticate_with_agent<H>(
     session: &mut client::Handle<H>,
     user: &str,
@@ -92,6 +95,20 @@ where
     Ok(auth.success())
 }
 
+#[cfg(not(unix))]
+async fn authenticate_with_agent<H>(
+    session: &mut client::Handle<H>,
+    user: &str,
+    key_path: &Path,
+) -> Result<bool>
+where
+    H: client::Handler,
+{
+    let _ = (session, user, key_path);
+    Ok(false)
+}
+
+#[cfg(unix)]
 async fn connect_agent(
 ) -> Option<AgentClient<impl russh::keys::agent::client::AgentStream + Send + Unpin>> {
     AgentClient::connect_env().await.ok()

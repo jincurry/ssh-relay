@@ -1,3 +1,4 @@
+#[cfg(unix)]
 use russh::keys::agent::client::AgentClient;
 use serde::Serialize;
 use std::env;
@@ -23,6 +24,11 @@ pub async fn ssh_agent_status() -> SshAgentStatus {
         return missing_agent_status();
     };
 
+    agent_status_for_socket(socket_value).await
+}
+
+#[cfg(unix)]
+async fn agent_status_for_socket(socket_value: String) -> SshAgentStatus {
     match AgentClient::connect_env().await {
         Ok(mut agent) => match agent.request_identities().await {
             Ok(identities) => agent_status_from_identity_count(socket_value, identities.len()),
@@ -36,6 +42,14 @@ pub async fn ssh_agent_status() -> SshAgentStatus {
             format!("failed to connect to ssh-agent: {err:?}"),
         ),
     }
+}
+
+#[cfg(not(unix))]
+async fn agent_status_for_socket(socket_value: String) -> SshAgentStatus {
+    agent_error_status(
+        Some(socket_value),
+        "ssh-agent integration is not available on this platform".to_string(),
+    )
 }
 
 fn missing_agent_status() -> SshAgentStatus {

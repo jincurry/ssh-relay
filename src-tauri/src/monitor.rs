@@ -9,8 +9,11 @@ use russh::client;
 use russh::{ChannelMsg, Disconnect};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+#[cfg(target_os = "linux")]
 use std::fs;
+#[cfg(target_os = "linux")]
 use std::process::Command;
+#[cfg(target_os = "linux")]
 use std::time::Duration;
 
 #[derive(Clone, Debug, Serialize)]
