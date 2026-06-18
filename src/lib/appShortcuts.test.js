@@ -7,7 +7,13 @@ describe("appShortcuts", () => {
       ctrlKey: true,
       key: "k",
       target: null,
-    }, { page: "hosts" })).toBe("palette");
+    }, { page: "hosts", platform: "Linux x86_64" })).toBe("palette");
+
+    expect(getGlobalShortcutAction({
+      metaKey: true,
+      key: "k",
+      target: null,
+    }, { page: "hosts", platform: "MacIntel" })).toBe("palette");
   });
 
   it("opens the snippets library outside SSH sessions", () => {
@@ -16,14 +22,21 @@ describe("appShortcuts", () => {
       key: ";",
       code: "Semicolon",
       target: null,
-    }, { page: "hosts" })).toBe("snippets");
+    }, { page: "hosts", platform: "Linux x86_64" })).toBe("snippets");
+
+    expect(getGlobalShortcutAction({
+      metaKey: true,
+      key: ";",
+      code: "Semicolon",
+      target: null,
+    }, { page: "hosts", platform: "MacIntel" })).toBe("snippets");
 
     expect(getGlobalShortcutAction({
       ctrlKey: true,
       key: ";",
       code: "Semicolon",
       target: { tagName: "INPUT" },
-    }, { page: "config" })).toBe("snippets");
+    }, { page: "config", platform: "Linux x86_64" })).toBe("snippets");
   });
 
   it("leaves the session snippet shortcut for the session drawer", () => {
@@ -32,7 +45,7 @@ describe("appShortcuts", () => {
       key: ";",
       code: "Semicolon",
       target: null,
-    }, { page: "session" })).toBe("");
+    }, { page: "session", platform: "Linux x86_64" })).toBe("");
   });
 
   it("ignores repeats and unrelated shortcuts", () => {
@@ -42,12 +55,12 @@ describe("appShortcuts", () => {
       code: "Semicolon",
       repeat: true,
       target: null,
-    }, { page: "hosts" })).toBe("");
+    }, { page: "hosts", platform: "Linux x86_64" })).toBe("");
 
     expect(getGlobalShortcutAction({
       ctrlKey: true,
       key: "x",
       target: null,
-    }, { page: "hosts" })).toBe("");
+    }, { page: "hosts", platform: "Linux x86_64" })).toBe("");
   });
 });
