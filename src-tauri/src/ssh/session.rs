@@ -580,7 +580,8 @@ mod tests {
 
     #[test]
     fn expands_tilde_private_key_paths() {
-        assert!(expand_private_key_path("~/.ssh/id_ed25519").ends_with(".ssh/id_ed25519"));
+        assert!(expand_private_key_path("~/.ssh/id_ed25519")
+            .ends_with(PathBuf::from(".ssh").join("id_ed25519")));
         assert_eq!(
             expand_private_key_path("/tmp/key"),
             PathBuf::from("/tmp/key")

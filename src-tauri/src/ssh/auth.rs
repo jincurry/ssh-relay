@@ -313,7 +313,7 @@ mod tests {
     #[test]
     fn expands_tilde_private_key_paths() {
         let expanded = expand_private_key_path("~/.ssh/id_ed25519");
-        assert!(expanded.ends_with(".ssh/id_ed25519"));
+        assert!(expanded.ends_with(PathBuf::from(".ssh").join("id_ed25519")));
     }
 
     #[test]
